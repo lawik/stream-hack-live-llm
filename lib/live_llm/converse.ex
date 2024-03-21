@@ -46,10 +46,26 @@ defmodule Converse do
             |> LiveLlm.LLM.generate()
             |> IO.iodata_to_binary()
 
+        IO.puts("::: response before cleaning ::::::::::::::::::::::::")
         IO.puts(response)
 
+        # Should remove start/stop markers and ignore anything after first stop
+        cleaned =
+            response
+            |> String.trim()
+            |> String.split(@stop)
+            |> Enum.take(1)
+            |> IO.iodata_to_binary()
+            |> String.split("\n")
+            |> Enum.reject(& String.starts_with?(&1, @start))
+            |> Enum.join("\n")
+
+
+        IO.puts("::: response after cleaning ::::::::::::::::::::::::")
+        IO.puts(cleaned)
+
         new_c
-        |> assistant(response)
+        |> assistant(cleaned)
     end
 
     defp part(party, query) do
