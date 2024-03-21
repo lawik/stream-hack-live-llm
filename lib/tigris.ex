@@ -50,20 +50,22 @@ defmodule Tigris do
     download!(%{key: key, size: size}, local_filepath)
   end
 
-  @format [
-      bar: " ",
-      left: "",
-      right: "",
-      bar_color: [IO.ANSI.white, IO.ANSI.green_background],
-      blank_color: IO.ANSI.blue_background,
-      suffix: :bytes
-    ]
-  defp progress(size, total) do
-    if size > 5 * 1024 * 1024 do
-      #ProgressBar.render(size, total, @format)
-      :ok
-    end
-  end
+  # @format [
+  #     bar: " ",
+  #     left: "",
+  #     right: "",
+  #     bar_color: [IO.ANSI.white, IO.ANSI.green_background],
+  #     blank_color: IO.ANSI.blue_background,
+  #     suffix: :bytes
+  #   ]
+  # defp progress(size, total) do
+  #   if size > 5 * 1024 * 1024 do
+  #     #ProgressBar.render(size, total, @format)
+  #     :ok
+  #   end
+  # end
+
+  def progress(_, _), do: :ok
 
   def put!(key, data) do
     bucket!()

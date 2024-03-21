@@ -1,7 +1,8 @@
 defmodule LiveLlm.LLM do
     use GenServer
     @cache_path "/data/model-cache"
-    @tuned_model {:hf, "teknium/OpenHermes-2.5-Mistral-7B", cache_dir: @cache_path}
+    #@tuned_model {:hf, "teknium/OpenHermes-2.5-Mistral-7B", cache_dir: @cache_path}
+    @tuned_model {:hf, "NousResearch/Hermes-2-Pro-Mistral-7B", cache_dir: @cache_path}
     @base_model  {:hf, "mistralai/Mistral-7B-Instruct-v0.2", cache_dir: @cache_path}
     @object_cache_key "openhermes-2.5"
 
@@ -9,7 +10,7 @@ defmodule LiveLlm.LLM do
         GenServer.start_link(__MODULE__, opts, name: __MODULE__)
     end
 
-    def init(opts) do
+    def init(_opts) do
         state = %{serving: nil}
         {:ok, state, {:continue, :download}}
     end
@@ -49,8 +50,9 @@ defmodule LiveLlm.LLM do
       IO.puts("start loading model...")
         Nx.global_default_backend(EXLA.Backend)
 
+      IO.inspect(@tuned_model, label: "loading model")
       IO.puts("Loading spec...")
-        {:ok, spec} =
+        {:ok, _spec} =
             Bumblebee.load_spec(@tuned_model,
               module: Bumblebee.Text.Mistral,
               architecture: :for_causal_language_modeling
