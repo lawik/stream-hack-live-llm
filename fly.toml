@@ -1,0 +1,42 @@
+# fly.toml app configuration file generated for live-llm on 2024-03-20T16:38:43+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'live-llm'
+primary_region = 'ams'
+kill_signal = 'SIGTERM'
+
+[build]
+
+[deploy]
+  #release_command = '/app/bin/migrate'
+  release_command = '/app/_build/prod/rel/live_llm/bin/migrate'
+
+
+[env]
+  PHX_HOST = 'live-llm.fly.dev'
+  PORT = '8080'
+
+[[mounts]]
+  source = 'data'
+  destination = '/data'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'connections'
+    hard_limit = 1000
+    soft_limit = 1000
+
+[[vm]]
+  size = 'a100-80gb'
+  memory = '32gb'
+  cpu_kind = 'performance'
+  cpus = 8
